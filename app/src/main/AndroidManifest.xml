@@ -26,6 +26,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".BluetoothActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/blActivityName" />
+        <activity
+            android:name=".TerminalActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/terminalActivityName" />
     </application>
 
 </manifest>

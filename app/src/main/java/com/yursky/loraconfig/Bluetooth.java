@@ -16,6 +16,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.util.Set;
 import java.util.UUID;
 
@@ -218,10 +219,14 @@ class Bluetooth {
     }
 
     /* Call this from the main activity to send data to the remote device */
-    void write(String input) {
-        byte[] bytes = input.getBytes();
+    void write(byte[] input) {
+        if (getStatus() != CONNECTED) {
+            EventBus.getDefault().post(new BluetoothEvent(DISCONNECTED, null));
+            return;
+        }
+
         try {
-            connectedThread.outStream.write(bytes);
+            connectedThread.outStream.write(input);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -280,6 +285,8 @@ class Bluetooth {
 
                         if (ch != '\n') {
                             msg.append(ch);
+//                            String hex = Integer.toHexString(ch);
+//                            System.out.println(hex);
                         } else {
                             Log.d("DEBUG", msg.toString());
                             EventBus.getDefault().post(new BluetoothEvent(MESSAGE_RECEIVED, msg.toString()));

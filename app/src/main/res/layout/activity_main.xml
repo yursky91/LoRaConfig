@@ -10,14 +10,14 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_bluetooth"
+            android:id="@+id/btnBluetooth"
             android:layout_width="0dp"
             android:layout_height="45dp"
             android:layout_weight="1"
             android:text="Bluetooth" />
 
         <Button
-            android:id="@+id/btn_terminal"
+            android:id="@+id/btnTerminal"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -26,13 +26,13 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/btn_read"
+        android:id="@+id/btnReadParam"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:text="Считать параметры" />
 
     <TextView
-        android:id="@+id/text_settings"
+        android:id="@+id/textSettings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Настройки"
@@ -50,7 +50,7 @@
             android:orientation="vertical">
 
             <CheckBox
-                android:id="@+id/chk_save_hard"
+                android:id="@+id/chkSaveHard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Сохранять после выключения" />
@@ -58,7 +58,7 @@
     </ScrollView>
 
     <Button
-        android:id="@+id/btn_write"
+        android:id="@+id/btnWriteParam"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_marginTop="-45dp"
