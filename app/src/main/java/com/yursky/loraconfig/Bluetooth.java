@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.util.Log;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -159,7 +158,6 @@ class Bluetooth {
         new Thread() {
             public void run() {
                 EventBus.getDefault().post(new BluetoothEvent(CONNECTING, name));
-                Log.d("DEBUG", context.getString(R.string.connectingTo));
 
                 //Establish the Bluetooth socket connection
                 try {
@@ -171,13 +169,11 @@ class Bluetooth {
                 } catch (Exception e) {
                     e.printStackTrace();
                     EventBus.getDefault().post(new BluetoothEvent(DISCONNECTED, null));
-                    Log.d("DEBUG", context.getString(R.string.connectionFailed));
 
                     try {
                         btSocket.close();
                     } catch (IOException e2) {
                         e2.printStackTrace();
-                        Log.d("DEBUG", "ПРОВЕРКА_2");
                     }
 
                     connectAttempts--;
@@ -190,7 +186,6 @@ class Bluetooth {
                 connectedThread.start();
                 connectAttempts = 5;
                 EventBus.getDefault().post(new BluetoothEvent(CONNECTED, name));
-                Log.d("DEBUG", context.getString(R.string.connectedTo) + name);
             }
         }.start();
     }
@@ -288,7 +283,6 @@ class Bluetooth {
 //                            String hex = Integer.toHexString(ch);
 //                            System.out.println(hex);
                         } else {
-                            Log.d("DEBUG", msg.toString());
                             EventBus.getDefault().post(new BluetoothEvent(MESSAGE_RECEIVED, msg.toString()));
                             msg = new StringBuilder();
                         }
@@ -296,7 +290,6 @@ class Bluetooth {
 
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Log.d("DEBUG", context.getString(R.string.disconnected));
                     EventBus.getDefault().post(new BluetoothEvent(DISCONNECTED, null));
                     connect(context, address, name, connectAttempts);
                     break;

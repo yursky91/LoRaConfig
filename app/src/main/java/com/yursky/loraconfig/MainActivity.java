@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -105,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case Bluetooth.MESSAGE_RECEIVED:
 //                Toast.makeText(this, "" + event.getData(), Toast.LENGTH_SHORT).show();
 
-//                Log.d("DEBUG", new BigInteger(1, ((String) event.getData()).getBytes()).toString(16));
+//                System.out.println(new BigInteger(1, ((String) event.getData()).getBytes()).toString(16));
 //
 //                StringBuilder sb = new StringBuilder();
 //                for (byte b : ((String) event.getData()).getBytes()) {
