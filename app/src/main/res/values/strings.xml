@@ -24,4 +24,12 @@
     <string name="cancel">Отмена</string>
     <string name="ok">Ок</string>
 
+
+    <string-array name="catlist">
+        <item>8N1</item>
+        <item>8O1</item>
+        <item>8E1</item>
+        <item>Рыжик</item>
+    </string-array>
+
 </resources>
