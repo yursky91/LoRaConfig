@@ -103,15 +103,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case Bluetooth.MESSAGE_RECEIVED:
 //                Toast.makeText(this, "" + event.getData(), Toast.LENGTH_SHORT).show();
+                System.out.println(event.getData());
 
-//                System.out.println(new BigInteger(1, ((String) event.getData()).getBytes()).toString(16));
-//
-//                StringBuilder sb = new StringBuilder();
-//                for (byte b : ((String) event.getData()).getBytes()) {
-//                    sb.append(String.format("%02X ", b));
-//                }
-//
-//                System.out.println(sb.toString());
                 break;
         }
     }

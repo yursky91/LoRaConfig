@@ -8,14 +8,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.util.Set;
 import java.util.UUID;
 
@@ -163,7 +161,7 @@ class Bluetooth {
                 try {
                     if (btSocket != null) btSocket.close(); //stop previous connection
 
-                    btSocket =(BluetoothSocket) device.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(device,1);
+                    btSocket = (BluetoothSocket) device.getClass().getMethod("createRfcommSocket", new Class[]{int.class}).invoke(device, 1);
                     btSocket.connect();
 
                 } catch (Exception e) {
@@ -271,6 +269,7 @@ class Bluetooth {
 
         public void run() {
             StringBuilder msg = new StringBuilder();
+            int n = 0;
             //Keep listening to the InputStream until an exception occurs
             while (true) {
                 try {
@@ -279,13 +278,25 @@ class Bluetooth {
                         char ch = (char) read;
 
                         if (ch != '\n') {
-                            msg.append(ch);
-//                            String hex = Integer.toHexString(ch);
-//                            System.out.println(hex);
-                        } else {
-                            EventBus.getDefault().post(new BluetoothEvent(MESSAGE_RECEIVED, msg.toString()));
-                            msg = new StringBuilder();
+                            String hex = Integer.toHexString(ch);
+
+                            //Check if status message
+                            if (hex.equals("c0") || hex.equals("c2") || n > 0) {
+                                msg.append(hex).append("_");
+                                n++;
+
+                                if (n < 6) continue;
+                                else msg.append("hex");
+
+                            } else {
+                                msg.append(ch);
+                                continue;
+                            }
                         }
+
+                        EventBus.getDefault().post(new BluetoothEvent(MESSAGE_RECEIVED, msg.toString()));
+                        msg = new StringBuilder();
+                        n = 0;
                     }
 
                 } catch (IOException e) {

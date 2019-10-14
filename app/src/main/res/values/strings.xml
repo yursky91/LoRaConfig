@@ -25,11 +25,58 @@
     <string name="ok">Ок</string>
 
 
-    <string-array name="catlist">
+    <string-array name="parity">
         <item>8N1</item>
         <item>8O1</item>
         <item>8E1</item>
-        <item>Рыжик</item>
+    </string-array>
+
+    <string-array name="uartRate">
+        <item>1200 bps</item>
+        <item>2400 bps</item>
+        <item>4800 bps</item>
+        <item>9600 bps</item>
+        <item>19200 bps</item>
+        <item>38400 bps</item>
+        <item>57600 bps</item>
+        <item>115200 bps</item>
+    </string-array>
+
+    <string-array name="airRate">
+        <item>0.3 kbps</item>
+        <item>1.2 kbps</item>
+        <item>2.4 kbps</item>
+        <item>4.8 kbps</item>
+        <item>9.6 kbps</item>
+        <item>19.2 kbps</item>
+    </string-array>
+
+    <string-array name="status">
+        <item>Enable</item>
+        <item>Disable</item>
+    </string-array>
+
+    <string-array name="IO">
+        <item>PushPull</item>
+        <item>OpenDrain</item>
+    </string-array>
+
+    <string-array name="WOR">
+        <item>250 ms</item>
+        <item>500 ms</item>
+        <item>750 ms</item>
+        <item>1000 ms</item>
+        <item>1250 ms</item>
+        <item>1500 ms</item>
+        <item>1750 ms</item>
+        <item>2000 ms</item>
+    </string-array>
+
+    <string-array name="power">
+        <item>21 dBm</item>
+        <item>24 dBm</item>
+        <item>27 dBm</item>
+        <item>30 dBm</item>
     </string-array>
 
 </resources>
