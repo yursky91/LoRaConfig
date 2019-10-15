@@ -13,8 +13,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.math.BigInteger;
-
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     static Bluetooth bluetooth = new Bluetooth();
@@ -102,10 +100,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case Bluetooth.MESSAGE_RECEIVED:
-//                Toast.makeText(this, "" + event.getData(), Toast.LENGTH_SHORT).show();
-                System.out.println(event.getData());
+                String message = (String) event.getData();
+                System.out.println(message);
 
+                LoraParam loraParam = null;
+                if (message.contains("hex")) {
+                    try {
+                        loraParam = new LoraParam(message);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return;
+                    }
+                }
                 break;
         }
     }
 }
+
+
