@@ -182,7 +182,7 @@ class Bluetooth {
 
                 connectedThread = new ConnectedThread(context);
                 connectedThread.start();
-                connectAttempts = 5;
+                connectAttempts = 0;
                 EventBus.getDefault().post(new BluetoothEvent(CONNECTED, name));
             }
         }.start();

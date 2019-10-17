@@ -3,10 +3,15 @@ package com.yursky.loraconfig;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
@@ -21,6 +26,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button btnTerminal;
     Button btnReadParam;
     Button btnWriteParam;
+
+    CheckBox chkSaveHard;
+    EditText editAddress;
+    Spinner spinParity;
+    Spinner spinUartRate;
+    Spinner spinAirRate;
+    EditText editChannel;
+    TextView textFreq;
+    Spinner spinFixed;
+    Spinner spinIo;
+    Spinner spinWor;
+    Spinner spinFec;
+    Spinner spinPower;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +65,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnTerminal.setOnClickListener(this);
         btnReadParam.setOnClickListener(this);
         btnWriteParam.setOnClickListener(this);
+
+        chkSaveHard = findViewById(R.id.chkSaveHard);
+        editAddress = findViewById(R.id.editAddress);
+        spinParity = findViewById(R.id.spinParity);
+        spinUartRate = findViewById(R.id.spinUartRate);
+        spinAirRate = findViewById(R.id.spinAirRate);
+        editChannel = findViewById(R.id.editChannel);
+        textFreq = findViewById(R.id.textFreq);
+        spinFixed = findViewById(R.id.spinFixed);
+        spinIo = findViewById(R.id.spinIo);
+        spinWor = findViewById(R.id.spinWor);
+        spinFec = findViewById(R.id.spinFec);
+        spinPower = findViewById(R.id.spinPower);
     }
 
     @Override
@@ -65,12 +96,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.btnReadParam:
+                bluetooth.write("mode_3".getBytes());
+                SystemClock.sleep(1500);
+
                 byte[] command = {(byte) 0xC1, (byte) 0xC1, (byte) 0xC1};
                 bluetooth.write(command);
                 break;
 
             case R.id.btnWriteParam:
+                bluetooth.write("mode_3".getBytes());
+                SystemClock.sleep(1500);
 
+                bluetooth.write(getLayoutData().getBytes());
                 break;
         }
 
@@ -103,17 +140,54 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String message = (String) event.getData();
                 System.out.println(message);
 
-                LoraParam loraParam = null;
                 if (message.contains("hex")) {
+                    LoraParam loraParam = null;
                     try {
                         loraParam = new LoraParam(message);
                     } catch (Exception e) {
                         e.printStackTrace();
                         return;
                     }
+
+                    setLayoutData(loraParam);
                 }
                 break;
         }
+    }
+
+    void setLayoutData(LoraParam loraParam) {
+        chkSaveHard.setChecked(loraParam.saveHard);
+        editAddress.setText("" + loraParam.address);
+        spinParity.setSelection(Integer.parseInt(loraParam.parity, 2));
+        spinUartRate.setSelection(Integer.parseInt(loraParam.uartRate, 2));
+        spinAirRate.setSelection(Integer.parseInt(loraParam.airRate, 2));
+        editChannel.setText("" + loraParam.channel);
+        textFreq.setText(410 + loraParam.channel + " MHz");
+        spinFixed.setSelection(Integer.parseInt(loraParam.fixedMode, 2));
+        spinIo.setSelection(Integer.parseInt(loraParam.ioMode, 2));
+        spinWor.setSelection(Integer.parseInt(loraParam.worTiming, 2));
+        spinFec.setSelection(Integer.parseInt(loraParam.fec, 2));
+        spinPower.setSelection(3 - Integer.parseInt(loraParam.power, 2));
+
+        Toast.makeText(this, "Параметры обновлены", Toast.LENGTH_SHORT).show();
+    }
+
+    LoraParam getLayoutData() {
+        LoraParam loraParam = new LoraParam();
+
+        loraParam.saveHard = chkSaveHard.isChecked();
+        loraParam.address = Integer.valueOf(editAddress.getText().toString());
+        loraParam.parity = Integer.toBinaryString(0x4 | spinParity.getSelectedItemPosition()).substring(1);
+        loraParam.uartRate = Integer.toBinaryString(0x8 | spinUartRate.getSelectedItemPosition()).substring(1);
+        loraParam.airRate = Integer.toBinaryString(0x8 | spinAirRate.getSelectedItemPosition()).substring(1);
+        loraParam.channel = Integer.valueOf(editChannel.getText().toString());
+        loraParam.fixedMode = Integer.toBinaryString(0x2 | spinFixed.getSelectedItemPosition()).substring(1);
+        loraParam.ioMode = Integer.toBinaryString(0x2 | spinIo.getSelectedItemPosition()).substring(1);
+        loraParam.worTiming = Integer.toBinaryString(0x8 | spinWor.getSelectedItemPosition()).substring(1);
+        loraParam.fec = Integer.toBinaryString(0x2 | spinFec.getSelectedItemPosition()).substring(1);
+        loraParam.power = Integer.toBinaryString(0x4 | (3 - spinPower.getSelectedItemPosition())).substring(1);
+
+        return loraParam;
     }
 }
 

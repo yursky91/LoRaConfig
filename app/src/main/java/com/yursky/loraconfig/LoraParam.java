@@ -8,11 +8,14 @@ class LoraParam {
     String uartRate = UART_RATE_9600;
     String airRate = AIR_RATE_2k4;
     int channel = 23;
-    boolean fixedMode = false;
+    String fixedMode = STATE_DISABLE;
     String ioMode = IO_MODE_PUSHPULL;
     String worTiming = WOR_TIMING_250;
-    boolean fec = true;
+    String fec = STATE_ENABLE;
     String power = POWER_30;
+
+    final static String STATE_DISABLE = "0";
+    final static String STATE_ENABLE = "1";
 
     final static String PARITY_8N1 = "00";
     final static String PARITY_8O1 = "01";
@@ -64,31 +67,17 @@ class LoraParam {
 
         //4 byte
         int intHex = Integer.parseInt(hexs[3], 16);
-        String binHex = Integer.toBinaryString(0x100 | intHex).substring(1);
+        String binHex = Integer.toBinaryString(0x100 | intHex).substring(1);    //0x100: 100 = 256 = 100000000
         char[] bitArray = binHex.toCharArray();
 
         String bitInfo = "" + bitArray[0] + bitArray[1];
-        if (bitInfo.equals("00")) parity = PARITY_8N1;
-        else if (bitInfo.equals("01")) parity = PARITY_8O1;
-        else if (bitInfo.equals("10")) parity = PARITY_8E1;
+        parity = bitInfo;
 
         bitInfo = "" + bitArray[2] + bitArray[3] + bitArray[4];
-        if (bitInfo.equals("000")) uartRate = UART_RATE_1200;
-        else if (bitInfo.equals("001")) uartRate = UART_RATE_2400;
-        else if (bitInfo.equals("010")) uartRate = UART_RATE_4800;
-        else if (bitInfo.equals("011")) uartRate = UART_RATE_9600;
-        else if (bitInfo.equals("100")) uartRate = UART_RATE_19200;
-        else if (bitInfo.equals("101")) uartRate = UART_RATE_38400;
-        else if (bitInfo.equals("110")) uartRate = UART_RATE_57600;
-        else if (bitInfo.equals("111")) uartRate = UART_RATE_115200;
+        uartRate = bitInfo;
 
         bitInfo = "" + bitArray[5] + bitArray[6] + bitArray[7];
-        if (bitInfo.equals("000")) airRate = AIR_RATE_0k3;
-        else if (bitInfo.equals("001")) airRate = AIR_RATE_1k2;
-        else if (bitInfo.equals("010")) airRate = AIR_RATE_2k4;
-        else if (bitInfo.equals("011")) airRate = AIR_RATE_4k8;
-        else if (bitInfo.equals("100")) airRate = AIR_RATE_9k6;
-        else if (bitInfo.equals("101")) airRate = AIR_RATE_19k2;
+        airRate = bitInfo;
 
         //5 byte
         channel = Integer.parseInt(hexs[4], 16);
@@ -98,29 +87,58 @@ class LoraParam {
         binHex = Integer.toBinaryString(0x100 | intHex).substring(1);
         bitArray = binHex.toCharArray();
 
-        if (bitArray[0] == '0') fixedMode = false;
-        else if (bitArray[0] == '1') fixedMode = true;
-
-        if (bitArray[1] == '0') ioMode = IO_MODE_OPENDRAIN;
-        else if (bitArray[1] == '1') ioMode = IO_MODE_PUSHPULL;
+        fixedMode = String.valueOf(bitArray[0]);
+        ioMode = String.valueOf(bitArray[1]);
 
         bitInfo = "" + bitArray[2] + bitArray[3] + bitArray[4];
-        if (bitInfo.equals("000")) worTiming = WOR_TIMING_250;
-        else if (bitInfo.equals("001")) worTiming = WOR_TIMING_500;
-        else if (bitInfo.equals("010")) worTiming = WOR_TIMING_750;
-        else if (bitInfo.equals("011")) worTiming = WOR_TIMING_1000;
-        else if (bitInfo.equals("100")) worTiming = WOR_TIMING_1250;
-        else if (bitInfo.equals("101")) worTiming = WOR_TIMING_1500;
-        else if (bitInfo.equals("110")) worTiming = WOR_TIMING_1750;
-        else if (bitInfo.equals("111")) worTiming = WOR_TIMING_2000;
+        worTiming = bitInfo;
 
-        if (bitArray[5] == '0') fec = false;
-        else if (bitArray[5] == '1') fec = true;
+        fec = String.valueOf(bitArray[5]);
 
         bitInfo = "" + bitArray[6] + bitArray[7];
-        if (bitInfo.equals("00")) power = POWER_30;
-        else if (bitInfo.equals("01")) power = POWER_27;
-        else if (bitInfo.equals("10")) power = POWER_24;
-        else if (bitInfo.equals("11")) power = POWER_21;
+        power = bitInfo;
+    }
+
+    LoraParam() {
+    }
+
+    byte[] getBytes() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        //1 byte
+        if (saveHard) stringBuilder.append("C0");
+        else stringBuilder.append("C2");
+        stringBuilder.append("_");
+
+        //2-3 byte
+        stringBuilder.append(Integer.toHexString(0x100 | (address / 256)).substring(1));
+        stringBuilder.append("_");
+        stringBuilder.append(Integer.toHexString(0x100 | (address - address / 256)).substring(1));
+        stringBuilder.append("_");
+
+        //4 byte
+        String dataByte = parity + uartRate + airRate;
+        String hex = Integer.toHexString(0x100 | Integer.parseInt(dataByte, 2)).substring(1);
+        stringBuilder.append(hex);
+        stringBuilder.append("_");
+
+        //5 byte
+        stringBuilder.append(Integer.toHexString(0x100 | channel).substring(1));
+        stringBuilder.append("_");
+
+        //6 byte
+        dataByte = fixedMode + ioMode + worTiming + fec + power;
+        hex = Integer.toHexString(0x100 | Integer.parseInt(dataByte, 2)).substring(1);
+        stringBuilder.append(hex);
+
+        String[] hexs = stringBuilder.toString().split("_");
+        byte[] bytes = {(byte) Integer.parseInt(hexs[0], 16),
+                (byte) Integer.parseInt(hexs[1], 16),
+                (byte) Integer.parseInt(hexs[2], 16),
+                (byte) Integer.parseInt(hexs[3], 16),
+                (byte) Integer.parseInt(hexs[4], 16),
+                (byte) Integer.parseInt(hexs[5], 16)};
+
+        return bytes;
     }
 }

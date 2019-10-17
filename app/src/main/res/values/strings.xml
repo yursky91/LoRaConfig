@@ -52,16 +52,16 @@
     </string-array>
 
     <string-array name="status">
-        <item>Enable</item>
         <item>Disable</item>
+        <item>Enable</item>
     </string-array>
 
-    <string-array name="IO">
-        <item>PushPull</item>
+    <string-array name="io">
         <item>OpenDrain</item>
+        <item>PushPull</item>
     </string-array>
 
-    <string-array name="WOR">
+    <string-array name="wor">
         <item>250 ms</item>
         <item>500 ms</item>
         <item>750 ms</item>

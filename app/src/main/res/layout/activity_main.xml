@@ -45,6 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginStart="-4dp"
+        android:checked="true"
         android:text="Сохранять после выключения" />
 
     <View
@@ -196,7 +197,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="40dp">
 
                 <TextView
                     android:layout_width="0dp"
@@ -219,7 +220,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="40dp">
 
                 <TextView
                     android:layout_width="0dp"
@@ -230,19 +231,19 @@
                     android:textSize="18sp" />
 
                 <Spinner
-                    android:id="@+id/spinIO"
+                    android:id="@+id/spinIo"
                     style="@android:style/Widget.Spinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:entries="@array/IO" />
+                    android:entries="@array/io" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="40dp">
 
                 <TextView
                     android:layout_width="0dp"
@@ -253,19 +254,19 @@
                     android:textSize="18sp" />
 
                 <Spinner
-                    android:id="@+id/spinWOR"
+                    android:id="@+id/spinWor"
                     style="@android:style/Widget.Spinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:entries="@array/WOR" />
+                    android:entries="@array/wor" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="40dp">
 
                 <TextView
                     android:layout_width="0dp"
@@ -276,7 +277,7 @@
                     android:textSize="18sp" />
 
                 <Spinner
-                    android:id="@+id/spinFEC"
+                    android:id="@+id/spinFec"
                     style="@android:style/Widget.Spinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -288,7 +289,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="40dp">
 
                 <TextView
                     android:layout_width="0dp"
