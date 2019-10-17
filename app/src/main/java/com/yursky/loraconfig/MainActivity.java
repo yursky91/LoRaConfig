@@ -1,15 +1,23 @@
 package com.yursky.loraconfig;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button btnReadParam;
     Button btnWriteParam;
 
+    LinearLayout layoutParam;
     CheckBox chkSaveHard;
     EditText editAddress;
     Spinner spinParity;
@@ -66,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnReadParam.setOnClickListener(this);
         btnWriteParam.setOnClickListener(this);
 
+        layoutParam = findViewById(R.id.layoutParam);
         chkSaveHard = findViewById(R.id.chkSaveHard);
         editAddress = findViewById(R.id.editAddress);
         spinParity = findViewById(R.id.spinParity);
@@ -78,6 +88,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         spinWor = findViewById(R.id.spinWor);
         spinFec = findViewById(R.id.spinFec);
         spinPower = findViewById(R.id.spinPower);
+
+        TextView.OnEditorActionListener editorActionListener = new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    if (v.equals(editChannel))
+                        textFreq.setText(410 + Integer.valueOf(v.getText().toString()) + " MHz");
+
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    v.clearFocus();
+                    return true;
+
+                } else
+                    return false; // pass on to other listeners.
+            }
+        };
+
+        editAddress.setOnEditorActionListener(editorActionListener);
+        editChannel.setOnEditorActionListener(editorActionListener);
     }
 
     @Override
@@ -150,6 +180,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
 
                     setLayoutData(loraParam);
+                    bluetooth.write("mode_0".getBytes());
                 }
                 break;
         }
@@ -170,6 +201,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         spinPower.setSelection(3 - Integer.parseInt(loraParam.power, 2));
 
         Toast.makeText(this, "Параметры обновлены", Toast.LENGTH_SHORT).show();
+
+        Animation anim = new AlphaAnimation(1.0f, 0.0f);
+        anim.setDuration(100);
+        anim.setRepeatMode(Animation.REVERSE);
+        anim.setRepeatCount(1);
+        layoutParam.startAnimation(anim);
     }
 
     LoraParam getLayoutData() {

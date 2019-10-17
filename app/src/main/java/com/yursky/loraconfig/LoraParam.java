@@ -63,7 +63,7 @@ class LoraParam {
         else if (hexs[0].equals("C2")) saveHard = false;
 
         //2-3 byte
-        address = 255 * Integer.parseInt(hexs[1], 16) + Integer.parseInt(hexs[2], 16);
+        address = 256 * Integer.parseInt(hexs[1], 16) + Integer.parseInt(hexs[2], 16);
 
         //4 byte
         int intHex = Integer.parseInt(hexs[3], 16);
@@ -111,9 +111,11 @@ class LoraParam {
         stringBuilder.append("_");
 
         //2-3 byte
-        stringBuilder.append(Integer.toHexString(0x100 | (address / 256)).substring(1));
+        int addressOne = address / 256; //take integer part
+        int addressTwo = address - addressOne * 256;
+        stringBuilder.append(Integer.toHexString(0x100 | addressOne).substring(1));
         stringBuilder.append("_");
-        stringBuilder.append(Integer.toHexString(0x100 | (address - address / 256)).substring(1));
+        stringBuilder.append(Integer.toHexString(0x100 | addressTwo).substring(1));
         stringBuilder.append("_");
 
         //4 byte
