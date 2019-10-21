@@ -3,9 +3,7 @@ package com.yursky.loraconfig;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
@@ -48,6 +46,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Spinner spinWor;
     Spinner spinFec;
     Spinner spinPower;
+
+    String targetMode;
+    byte[] targetCommand;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,18 +127,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.btnReadParam:
-                bluetooth.write("mode_3".getBytes());
-                SystemClock.sleep(1500);
-
-                byte[] command = {(byte) 0xC1, (byte) 0xC1, (byte) 0xC1};
-                bluetooth.write(command);
+                byte[] command = new byte[]{(byte) 0xC1, (byte) 0xC1, (byte) 0xC1};
+                writeCommand(command);
                 break;
 
             case R.id.btnWriteParam:
-                bluetooth.write("mode_3".getBytes());
-                SystemClock.sleep(1500);
-
-                bluetooth.write(getLayoutData().getBytes());
+                writeCommand(getLayoutData().getBytes());
                 break;
         }
 
@@ -170,8 +165,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String message = (String) event.getData();
                 System.out.println(message);
 
-                if (message.contains("hex")) {
-                    LoraParam loraParam = null;
+                if (message.endsWith("_hex")) {
+                    LoraParam loraParam;
                     try {
                         loraParam = new LoraParam(message);
                     } catch (Exception e) {
@@ -180,10 +175,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
 
                     setLayoutData(loraParam);
-                    bluetooth.write("mode_0".getBytes());
+                    setMode(0);
+
+                } else if (message.startsWith("mode_")) {
+                    if (targetMode.equals(message)) {
+                        targetMode = null;
+
+                        if (targetCommand != null) {
+                            bluetooth.write(targetCommand);
+                            targetCommand = null;
+                        }
+                    }
                 }
                 break;
         }
+    }
+
+    void writeCommand(final byte[] command) {
+        setMode(3);
+        targetCommand = command;
+    }
+
+    void setMode(int mode) {
+        targetMode = "mode_" + mode;
+        bluetooth.write(targetMode.getBytes());
     }
 
     void setLayoutData(LoraParam loraParam) {
