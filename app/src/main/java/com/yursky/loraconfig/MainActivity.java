@@ -166,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 System.out.println(message);
 
                 if (message.endsWith("_hex")) {
+                    //Config message
                     LoraParam loraParam;
                     try {
                         loraParam = new LoraParam(message);
@@ -175,10 +176,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
 
                     setLayoutData(loraParam);
-                    setMode(0);
+                    setMode(0); //return to normal mode
 
                 } else if (message.startsWith("mode_")) {
-                    if (targetMode.equals(message)) {
+                    //Mode message
+                    if (targetMode != null && targetMode.equals(message)) {
                         targetMode = null;
 
                         if (targetCommand != null) {
@@ -192,8 +194,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     void writeCommand(final byte[] command) {
-        setMode(3);
         targetCommand = command;
+        setMode(3);
     }
 
     void setMode(int mode) {

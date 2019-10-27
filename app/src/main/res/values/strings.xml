@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Lora Config</string>
+    <string name="app_name">LoRa Config</string>
     <string name="blActivityName">Подключение</string>
     <string name="infoActivityName">Общая информация</string>
     <string name="terminalActivityName">Терминал</string>

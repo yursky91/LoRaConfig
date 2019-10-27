@@ -1,20 +1,28 @@
 package com.yursky.loraconfig;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ScrollView;
+import android.text.method.ScrollingMovementMethod;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class TerminalActivity extends AppCompatActivity {
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
-    ScrollView scrollVertical;
+public class TerminalActivity extends AppCompatActivity implements View.OnClickListener {
+
     TextView textTerminal;
+    EditText editMessage;
+    ImageButton btnSend;
+
+    static String terminal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,25 +31,34 @@ public class TerminalActivity extends AppCompatActivity {
 
         EventBus.getDefault().register(this);
 
-        scrollVertical = findViewById(R.id.scrollVertical);
         textTerminal = findViewById(R.id.textTerminal);
+        editMessage = findViewById(R.id.editMessage);
+        btnSend = findViewById(R.id.btnSend);
 
+        textTerminal.setMovementMethod(new ScrollingMovementMethod());
+        textTerminal.setText(terminal);
+        btnSend.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnSend:
+                String time = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
+                textTerminal.append("\n\n" + time + ">>>: " + editMessage.getText());
+                MainActivity.bluetooth.write((editMessage.getText() + "\n").getBytes());
+                terminal = textTerminal.getText().toString();
+                break;
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void handleBluetoothEvent(Bluetooth.BluetoothEvent event) {
         switch (event.getAction()) {
             case Bluetooth.MESSAGE_RECEIVED:
-                textTerminal.setText(textTerminal.getText() + "\n" + event.getData() + "\n");
-
-                //Handler is needed for scrollView scrolling
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        scrollVertical.fullScroll(ScrollView.FOCUS_DOWN);
-                    }
-                }, 250); //250 ms delay
+                String time = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
+                textTerminal.append("\n\n" + time + ": " + event.getData());
+                terminal = textTerminal.getText().toString();
                 break;
         }
     }
