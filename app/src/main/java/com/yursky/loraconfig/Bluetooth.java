@@ -259,7 +259,8 @@ class Bluetooth {
             try {
                 tmpIn = btSocket.getInputStream();
                 tmpOut = btSocket.getOutputStream();
-            } catch (IOException ignored) {
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
             this.inStream = tmpIn;
@@ -301,6 +302,13 @@ class Bluetooth {
 
                 } catch (IOException e) {
                     e.printStackTrace();
+
+                    try {
+                        btSocket.close();
+                    } catch (IOException e2) {
+                        e2.printStackTrace();
+                    }
+
                     EventBus.getDefault().post(new BluetoothEvent(DISCONNECTED, null));
                     connect(context, address, name, connectAttempts);
                     break;

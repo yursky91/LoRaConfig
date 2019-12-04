@@ -59,8 +59,9 @@ class LoraParam {
         String[] hexs = data.split("_");
 
         //1 byte
-        if (hexs[0].equals("C0")) saveHard = true;
-        else if (hexs[0].equals("C2")) saveHard = false;
+        if (hexs[0].equals("c0")) saveHard = true;
+        else if (hexs[0].equals("c2")) saveHard = false;
+        else throw new Exception();
 
         //2-3 byte
         address = 256 * Integer.parseInt(hexs[1], 16) + Integer.parseInt(hexs[2], 16);
@@ -81,6 +82,7 @@ class LoraParam {
 
         //5 byte
         channel = Integer.parseInt(hexs[4], 16);
+        if (channel < 0 || channel > 31) throw new Exception();
 
         //6 byte
         intHex = Integer.parseInt(hexs[5], 16);

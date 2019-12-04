@@ -3,6 +3,9 @@ package com.yursky.loraconfig;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -22,8 +25,6 @@ public class TerminalActivity extends AppCompatActivity implements View.OnClickL
     EditText editMessage;
     ImageButton btnSend;
 
-    static String terminal;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,18 +37,42 @@ public class TerminalActivity extends AppCompatActivity implements View.OnClickL
         btnSend = findViewById(R.id.btnSend);
 
         textTerminal.setMovementMethod(new ScrollingMovementMethod());
-        textTerminal.setText(terminal);
+        textTerminal.setText(MainActivity.terminal);
         btnSend.setOnClickListener(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.terminal_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.btnClear:
+                MainActivity.terminal = "";
+                textTerminal.setText("");
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnSend:
-                String time = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
-                textTerminal.append("\n\n" + time + ">>>: " + editMessage.getText());
                 MainActivity.bluetooth.write((editMessage.getText() + "\n").getBytes());
-                terminal = textTerminal.getText().toString();
+
+                if (MainActivity.bluetooth.getStatus() == Bluetooth.CONNECTED) {
+                    String time = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
+                    textTerminal.append("\n\n" + ">" + time + ": " + editMessage.getText());
+                    MainActivity.terminal += "\n\n" + ">" + time + ": " + editMessage.getText();
+                }
                 break;
         }
     }
@@ -58,7 +83,6 @@ public class TerminalActivity extends AppCompatActivity implements View.OnClickL
             case Bluetooth.MESSAGE_RECEIVED:
                 String time = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
                 textTerminal.append("\n\n" + time + ": " + event.getData());
-                terminal = textTerminal.getText().toString();
                 break;
         }
     }

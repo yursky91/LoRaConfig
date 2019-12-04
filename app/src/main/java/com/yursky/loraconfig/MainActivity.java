@@ -24,9 +24,14 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     static Bluetooth bluetooth = new Bluetooth();
+    static String terminal = "";
 
     Button btnBluetooth;
     Button btnTerminal;
@@ -165,6 +170,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String message = (String) event.getData();
                 System.out.println(message);
 
+                String time = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
+                terminal += "\n\n" + time + ": " + event.getData();
+
                 if (message.endsWith("_hex")) {
                     //Config message
                     LoraParam loraParam;
@@ -242,6 +250,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         loraParam.power = Integer.toBinaryString(0x4 | (3 - spinPower.getSelectedItemPosition())).substring(1);
 
         return loraParam;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        bluetooth.unregisterReceiver(this);
     }
 }
 
