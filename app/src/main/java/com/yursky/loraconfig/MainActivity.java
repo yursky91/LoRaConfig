@@ -186,13 +186,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     setLayoutData(loraParam);
                     setMode(0); //return to normal mode
 
-                } else if (message.startsWith("mode_")) {
+                } else if (message.startsWith("/mode_")) {
                     //Mode message
                     if (targetMode != null && targetMode.equals(message)) {
                         targetMode = null;
 
                         if (targetCommand != null) {
+                            //LoRa ready, send command
                             bluetooth.write(targetCommand);
+                            bluetooth.write("\n".getBytes());
                             targetCommand = null;
                         }
                     }
@@ -202,13 +204,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     void writeCommand(final byte[] command) {
+        //Set next command and wait when LoRa will be ready
         targetCommand = command;
         setMode(3);
     }
 
     void setMode(int mode) {
-        targetMode = "mode_" + mode;
+        targetMode = "/mode_" + mode;
         bluetooth.write(targetMode.getBytes());
+        bluetooth.write("\n".getBytes());
     }
 
     void setLayoutData(LoraParam loraParam) {

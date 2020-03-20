@@ -278,7 +278,13 @@ class Bluetooth {
                     if (read != -1) {
                         char ch = (char) read;
 
-                        if (ch != '\n') {
+                        if (ch == '/') {
+                            // Start service message
+                            msg = new StringBuilder();
+                            msg.append('/');
+                            continue;
+
+                        } else if (ch != '\n') {
                             String hex = Integer.toHexString(ch);
 
                             //Check if status message
